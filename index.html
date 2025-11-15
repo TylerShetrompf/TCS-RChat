@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- include bootstrap css -->
+    <link href="Style/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCS-RChat</title>
+</head>
+
+<body>
+
+    <div id="container"></div>
+
+    <!-- Bootstrap Container -->
+    <div class="container-fluid" id="appcontainer">
+        <div class="row" id="rowlogo">
+            <!-- TCS-RChat Logo -->
+            <img class="mx-auto d-block" src="images/TCS-RChat.png" alt="TCS-RChat Logo">
+        </div>
+        <!-- Main Row -->
+        <div class="row" id="rowmain">
+
+            <!-- 3 Columns in Main Row -->
+
+            <!-- Left col -->
+            <div class="col-lg-4 order-2 order-lg-1" id="left"></div>
+
+            <!-- Middle col, id is App -->
+            <div class="col-lg-4 order-1 order-lg-2" id="middle">
+
+
+
+                <!-- The Chat Form -->
+                    <div class="form-group my-2 shadow-sm" id="FormPassword">
+                        <input type="text" class="form-control" id="inputText" placeholder="Type something...">
+                    </div>
+                    <!-- Login Button -->
+                    <div class="d-grid my-1">
+                        <button type="submitButton" class="btn btn-success btn-large btn-block shadow-sm">Submit</button>
+                    </div>
+
+
+            </div>
+
+            <!-- Right row -->
+            <div class="col-lg-4 order-3 order-lg-3" id="right"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer fixed-bottom">
+        <div class="container-fluid">
+            <span class="text-white">&copy; TSC-RChat.com</span>
+        </div>
+    </footer>
+    <script>
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // Example: Generate a random number between 1 and 100
+        const id = getRandomInt(1, 1000);
+
+        // Create a WebSocket connection to the server
+        const socket = new WebSocket('ws://127.0.0.1:8000/ws/'+id);
+        console.log('ws://127.0.0.1:8000/ws/'+id)
+
+        // Function to display messages on the web page
+        function showMessage(message) {
+            const messageContainer = document.getElementById('container');
+            const messageElement = document.createElement('div');
+            messageElement.textContent = message;
+            messageContainer.appendChild(messageElement);
+        }
+
+        // Event handler for when the connection is established
+        socket.addEventListener('open', (event) => {
+            showMessage('Connected to server.');
+        });
+
+        // Event handler for receiving messages from the server
+        socket.onmessage = (event) => {
+            showMessage("You sent : " + event.data)
+        }
+
+        // Event handler for when the connection is closed
+        socket.addEventListener('close', (event) => {
+            showMessage('Connection closed.');
+        });
+
+        const inputText = document.getElementById("inputText");
+        const submitButton = document.getElementById("submitButton");
+
+        submitButton.addEventListener("click", function () {
+            const inputValue = inputText.value;
+            socket.send(inputValue)
+        });
+    </script>
+
+    <!-- include bootstrap js bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+
+</html>
+
